@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  main-service:
+    image: ${DOCKER_REGISTRY}/your-username/mortgage-main-service:${VERSION}
+    ports:
+      - "80:8000"  # Map to standard HTTP port
+    restart: always
+    depends_on:
+      - finance-service
+    networks:
+      - mortgage-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  finance-service:
+    image: ${DOCKER_REGISTRY}/your-username/mortgage-finance-service:${VERSION}
+    expose:
+      - "8003"  # Only exposed internally
+    restart: always
+    networks:
+      - mortgage-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  mortgage-network:
+    driver: bridge 
