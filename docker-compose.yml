@@ -1,21 +1,16 @@
 version: '3'
 services:
   main-service:
+    build: ./services/main_service
     image: main-service:latest
     ports:
       - "8000:8000"
     depends_on:
-      - service-1
-      - service-2
-  service-1:
-    image: service-1:latest
+      - finance-service
+  finance-service:
+    build: ./services/finance_service
+    image: finance-service:latest
     ports:
-      - "8001:8001"
+      - "8003:8003"
     volumes:
-      - ./services/service_1/persistent:/service_1/persistent
-  service-2:
-    image: service-2:latest
-    ports:
-      - "8002:8002"
-    volumes:
-      - ./services/service_2/persistent:/service_2/persistent
+      - ./services/finance_service/persistent:/finance_service/persistent
