@@ -4,7 +4,10 @@ pipeline {
     environment {
         DOCKER_REGISTRY_CREDENTIALS = 'docker-hub-credentials'  // needs to be configured in Jenkins
         LINODE_SSH_CREDENTIALS = 'linode-ssh-credentials'  // needs to be configured in Jenkins
-        LINODE_HOST = '139.162.198.94'  // will be replaced with actual IP
+        LINODE_HOST = '139.162.198.94'
+        DOMAIN = '139-162-198-94.ip.linodeusercontent.com'
+        EMAIL = 'admin@example.com'  // Replace with your actual email for Let's Encrypt
+        USE_LETSENCRYPT = 'true'  // Set to 'false' for self-signed certificates
         
         MAIN_SERVICE_IMAGE = "dmwa14/mortgage-main-service"
         FINANCE_SERVICE_IMAGE = "dmwa14/mortgage-finance-service"
@@ -65,9 +68,12 @@ pipeline {
                             # Copy deployment files
                             scp -o StrictHostKeyChecking=no docker-compose.prod.yml root@${LINODE_HOST}:/root/mortgage-calculator/
                             scp -o StrictHostKeyChecking=no deploy.sh root@${LINODE_HOST}:/root/mortgage-calculator/
+                            scp -o StrictHostKeyChecking=no nginx.conf root@${LINODE_HOST}:/root/mortgage-calculator/
+                            scp -o StrictHostKeyChecking=no SSL_SETUP.md root@${LINODE_HOST}:/root/mortgage-calculator/
+                            scp -o StrictHostKeyChecking=no HTTPS_README.md root@${LINODE_HOST}:/root/mortgage-calculator/
                             
-                            # Execute deployment script
-                            ssh -o StrictHostKeyChecking=no root@${LINODE_HOST} 'cd /root/mortgage-calculator && chmod +x deploy.sh && VERSION=${VERSION} ./deploy.sh'
+                            # Execute deployment script with environment variables
+                            ssh -o StrictHostKeyChecking=no root@${LINODE_HOST} 'cd /root/mortgage-calculator && chmod +x deploy.sh && VERSION=${VERSION} DOMAIN=${DOMAIN} EMAIL=${EMAIL} USE_LETSENCRYPT=${USE_LETSENCRYPT} ./deploy.sh'
                         """
                     }
                 }
@@ -82,7 +88,8 @@ pipeline {
             sh 'docker logout'
         }
         success {
-            echo 'Deployment successful!'
+            echo 'Deployment successful! HTTPS should now be configured.'
+            echo "Your application is available at: https://${DOMAIN}/calculate_mortgage_affordability"
         }
         failure {
             echo 'Deployment failed!'
