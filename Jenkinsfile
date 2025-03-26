@@ -24,7 +24,10 @@ pipeline {
         stage('Build and Push Docker Images') {
             steps {
                 script {
-                    docker.withRegistry("https://${DOCKER_REGISTRY}", DOCKER_REGISTRY_CREDENTIALS) {
+                    withCredentials([usernamePassword(credentialsId: DOCKER_REGISTRY_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        // Login to Docker Hub
+                        sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+                        
                         // Build and push main service
                         sh """
                             docker build -t ${MAIN_SERVICE_IMAGE}:${VERSION} -t ${MAIN_SERVICE_IMAGE}:latest ./services/main_service
@@ -63,6 +66,7 @@ pipeline {
         always {
             // Clean up Docker images
             sh 'docker system prune -f'
+            sh 'docker logout'
         }
         success {
             echo 'Deployment successful!'

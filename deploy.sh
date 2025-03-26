@@ -8,6 +8,9 @@ if [ -f .env ]; then
     source .env
 fi
 
+# Set default values if not provided
+VERSION=${VERSION:-"latest"}
+
 # Pull the latest images
 docker-compose -f docker-compose.prod.yml pull
 
