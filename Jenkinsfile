@@ -6,7 +6,7 @@ pipeline {
         LINODE_SSH_CREDENTIALS = 'linode-ssh-credentials'  // needs to be configured in Jenkins
         LINODE_HOST = '139.162.198.94'
         DOMAIN = '139-162-198-94.ip.linodeusercontent.com'
-        EMAIL = 'admin@example.com'  // Replace with your actual email for Let's Encrypt
+        EMAIL = 'mccorleyd@gmail.com'  // Replace with your actual email for Let's Encrypt
         USE_LETSENCRYPT = 'true'  // Set to 'false' for self-signed certificates
         
         MAIN_SERVICE_IMAGE = "dmwa14/mortgage-main-service"
