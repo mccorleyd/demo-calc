@@ -7,8 +7,8 @@ pipeline {
         LINODE_SSH_CREDENTIALS = 'linode-ssh-credentials'  // needs to be configured in Jenkins
         LINODE_HOST = 'your-linode-ip'  // will be replaced with actual IP
         
-        MAIN_SERVICE_IMAGE = "${DOCKER_REGISTRY}/your-username/mortgage-main-service"
-        FINANCE_SERVICE_IMAGE = "${DOCKER_REGISTRY}/your-username/mortgage-finance-service"
+        MAIN_SERVICE_IMAGE = "${DOCKER_REGISTRY}/dmwa14/mortgage-main-service"
+        FINANCE_SERVICE_IMAGE = "${DOCKER_REGISTRY}/dmwa14/mortgage-finance-service"
         
         VERSION = "${BUILD_NUMBER}"
     }
@@ -17,7 +17,8 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'docker-compose build'
-                sh 'sh test.sh'
+                sh 'docker-compose run main-service pytest'
+                sh 'docker-compose run finance-service pytest'
             }
         }
         

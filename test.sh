@@ -1,12 +1,13 @@
 #!/bin/bash
 
+# Build the services
+docker-compose build
+
 # Run tests for the finance service
-pytest services/finance_service/
+docker-compose run finance-service pytest
 
 # Run tests for main service
-docker build -t main-service -f ./services/main_service/Dockerfile ./services/main_service
-docker build -t finance-service -f ./services/finance_service/Dockerfile ./services/finance_service
+docker-compose run main-service pytest
 
-docker-compose -f docker-compose.test.yml up -d
-docker-compose logs --tail=1000 -f main-service
+# Clean up
 docker-compose down
