@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   main-service:
-    image: ${DOCKER_REGISTRY}/dmwa14/mortgage-main-service:${VERSION}
+    image: dmwa14/mortgage-main-service:${VERSION}
     ports:
       - "80:8000"  # Map to standard HTTP port
     restart: always
@@ -17,7 +17,7 @@ services:
         max-file: "3"
 
   finance-service:
-    image: ${DOCKER_REGISTRY}/dmwa14/mortgage-finance-service:${VERSION}
+    image: dmwa14/mortgage-finance-service:${VERSION}
     expose:
       - "8003"  # Only exposed internally
     restart: always
