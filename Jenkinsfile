@@ -49,12 +49,25 @@ pipeline {
         stage('Deploy to Linode') {
             steps {
                 script {
+                    // First, create SSH config to disable host key checking
+                    sh """
+                        mkdir -p ~/.ssh
+                        echo "StrictHostKeyChecking no" > ~/.ssh/config
+                        chmod 600 ~/.ssh/config
+                    """
+                    
                     // Copy deployment files to Linode
                     sshagent([LINODE_SSH_CREDENTIALS]) {
                         sh """
-                            scp docker-compose.prod.yml root@${LINODE_HOST}:/root/mortgage-calculator/
-                            scp deploy.sh root@${LINODE_HOST}:/root/mortgage-calculator/
-                            ssh root@${LINODE_HOST} 'cd /root/mortgage-calculator && chmod +x deploy.sh && VERSION=${VERSION} ./deploy.sh'
+                            # Create the deployment directory
+                            ssh -o StrictHostKeyChecking=no root@${LINODE_HOST} 'mkdir -p /root/mortgage-calculator'
+                            
+                            # Copy deployment files
+                            scp -o StrictHostKeyChecking=no docker-compose.prod.yml root@${LINODE_HOST}:/root/mortgage-calculator/
+                            scp -o StrictHostKeyChecking=no deploy.sh root@${LINODE_HOST}:/root/mortgage-calculator/
+                            
+                            # Execute deployment script
+                            ssh -o StrictHostKeyChecking=no root@${LINODE_HOST} 'cd /root/mortgage-calculator && chmod +x deploy.sh && VERSION=${VERSION} ./deploy.sh'
                         """
                     }
                 }
