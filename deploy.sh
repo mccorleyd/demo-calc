@@ -36,6 +36,10 @@ fi
 if [ "$USE_LETSENCRYPT" = "true" ]; then
     echo "=== Setting up Let's Encrypt certificates ==="
     
+    # Stop any services that might be using port 80 first
+    echo "Stopping any services using port 80..."
+    docker-compose -f docker-compose.prod.yml down || true
+    
     # Request a certificate from Let's Encrypt
     echo "Requesting certificates from Let's Encrypt..."
     certbot certonly --standalone --non-interactive --agree-tos --email $EMAIL -d $DOMAIN
