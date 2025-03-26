@@ -2,13 +2,12 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_REGISTRY = 'docker.io'  // or your private registry
         DOCKER_REGISTRY_CREDENTIALS = 'docker-hub-credentials'  // needs to be configured in Jenkins
         LINODE_SSH_CREDENTIALS = 'linode-ssh-credentials'  // needs to be configured in Jenkins
         LINODE_HOST = 'your-linode-ip'  // will be replaced with actual IP
         
-        MAIN_SERVICE_IMAGE = "${DOCKER_REGISTRY}/dmwa14/mortgage-main-service"
-        FINANCE_SERVICE_IMAGE = "${DOCKER_REGISTRY}/dmwa14/mortgage-finance-service"
+        MAIN_SERVICE_IMAGE = "dmwa14/mortgage-main-service"
+        FINANCE_SERVICE_IMAGE = "dmwa14/mortgage-finance-service"
         
         VERSION = "${BUILD_NUMBER}"
     }
